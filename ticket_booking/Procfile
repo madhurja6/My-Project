@@ -1,1 +1,0 @@
-web: gunicorn ticket_booking.wsgi:application
