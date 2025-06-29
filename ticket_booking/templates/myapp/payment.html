@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100 py-10 px-4">
+    <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-lg">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">
+            Secure Payment
+        </h2>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Name on Card</label>
+                <input type="text" name="name" id="name" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="card_number" class="block text-sm font-medium text-gray-700">Card Number</label>
+                <input type="text" name="card_number" id="card_number" maxlength="16" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="expiry" class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                    <input type="text" name="expiry" id="expiry" placeholder="MM/YY" required
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
+                    <input type="password" name="cvv" id="cvv" maxlength="4" required
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all duration-200">
+                    Pay Now ₹{{ amount }}
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-gray-500">
+            Your payment is encrypted and secure.
+        </div>
+    </div>
+</div>
+{% endblock content %}

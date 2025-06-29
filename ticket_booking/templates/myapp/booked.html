@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen bg-green-100 text-center p-4">
+  <!-- Optional icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+  </svg>
+  <h2 class="text-3xl font-bold mb-4 text-green-700">Success!</h2>
+  <p class="text-lg mb-6 text-gray-700">Your ticket has been successfully booked.</p>
+  <a href="{% url "my_tickets" %}" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full transition">
+    View My Bookings
+  </a>
+</div>
+{% endblock content %}

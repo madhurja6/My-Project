@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Book Ticket{% endblock %}
+
+{% block content %}
+<div class="relative">
+  <!-- Background wrapper -->
+  <div class="absolute inset-0 z-0">
+    <div class="w-full h-full bg-cover bg-center filter brightness-55"
+         style="background-image: url('{% static 'backgrounds/bus1.png' %}');">
+    </div>
+  </div>
+
+  <!-- Content over background -->
+  <div class="relative z-10 pt-16">
+    {% if not user.is_authenticated %}
+    <div class="flex items-center justify-center min-h-screen text-white">
+        <div class="text-center">
+          <h2 class="text-3xl md:text-4xl font-extrabold mb-6">Please login to view and book tickets</h2>
+          <a href="{% url 'login' %}"
+             class="bg-white text-blue-700 px-8 py-3 rounded-full font-bold shadow-lg
+                    hover:bg-gray-100 hover:scale-105 transition-all duration-300 ease-in-out">
+              Go to Login
+          </a>
+        </div>
+    </div>
+    {% else %}
+    
+    
+    <!-- Bus Operators Section -->
+    <div class="md:flex">
+      <div class="container px-0 py-8 flex justify-start items-start">
+        <div class="max-w-2xl rounded-2xl p-2 md:p-4">
+          <h2 class="text-3xl font-bold text-white mb-8 text-center">Our Partner Bus Operators</h2>
+          <div class="space-y-4">
+            {% for name, desc in  operators %}
+            <div class="flex items-start">
+              <div class="flex-shrink-0 mt-1">
+                <svg class="h-6 w-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-xl font-semibold text-white">{{ name }}</h3>
+                <p class="text-blue-100">{{ desc }}</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Info & CTA -->
+      <div class="min-h-screen flex flex-col justify-center items-start text-white p-2">
+        <div class="backdrop-blur-xs bg-opacity-60 p-6 md:p-8 rounded-xl shadow-2xl max-w-2xl text-center mr-2 md:mr-8">
+          <h2 class="text-2xl md:text-3xl font-bold mb-6">Experience Comfort On the Road</h2>
+          <p class="text-lg md:text-xl leading-relaxed mb-8">
+            Luxury bus travel transforms road trips into premium experiences, offering spacious reclining seats, charging ports, entertainment, Wi-Fi, and onboard restrooms. Booking is easy via apps and platforms for browsing, seat selection, and ticket purchase in minutes.
+          </p>
+          <a href="{% url 'busbook' %}"
+             class="inline-block bg-white text-blue-700 text-lg md:text-xl px-8 py-3 md:px-10 md:py-4 rounded-full font-bold shadow-xl
+                    hover:bg-gray-100 hover:scale-105 transition-all duration-300 ease-in-out">
+            Book Your Ticket
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div><br><br>
+
+<!-- FAQ Section -->
+<div class="bg-gray-100 py-12 px-6 md:px-12 rounded-lg shadow-xl mt-8 text-black max-w-7xl mx-auto">
+  <h2 class="text-3xl font-extrabold mb-10 text-center">Frequently Asked Questions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    
+    <!-- FAQ Item 1 -->
+    <details class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer" open>
+      <summary class="text-lg font-semibold cursor-pointer list-none flex justify-between items-center">
+        Q: How do I book a bus ticket on bookMyticket?
+        <span class="text-blue-500 transform transition-transform duration-300 ease-in-out group-open:rotate-90 cursor-pointer hover:text-blue-700 hover:scale-110">▶</span>
+      </summary>
+      <p class="mt-4 leading-relaxed text-gray-700">
+        Booking a bus ticket on bookMyticket is simple: Visit the bus ticket booking page, enter your departure and destination cities, select travel dates, browse through available bus operators and routes, choose your preferred seat and fare, then click ‘Book Now’ to complete the process.
+      </p>
+    </details>
+
+    <!-- FAQ Item 2 -->
+    <details class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+      <summary class="text-lg font-semibold cursor-pointer list-none flex justify-between items-center">
+        Q: Are there any bus ticket offers available on bookMyticket?
+        <span class="text-blue-500 transform transition-transform duration-300 ease-in-out group-open:rotate-90 cursor-pointer hover:text-blue-700 hover:scale-110">▶</span>
+      </summary>
+      <p class="mt-4 leading-relaxed text-gray-700">
+        Yes, bookMyticket regularly features special discounts and offers on bus tickets. When searching for buses, any ongoing deals will automatically be applied and shown. You can also filter by price or bus type to find the best deals quickly.
+      </p>
+    </details>
+
+    <!-- FAQ Item 3 -->
+    <details class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+      <summary class="text-lg font-semibold cursor-pointer list-none flex justify-between items-center">
+        Q: How can I find budget-friendly bus tickets on bookMyticket?
+        <span class="text-blue-500 transform transition-transform duration-300 ease-in-out group-open:rotate-90 cursor-pointer hover:text-blue-700 hover:scale-110">▶</span>
+      </summary>
+      <p class="mt-4 leading-relaxed text-gray-700">
+        To find budget-friendly bus tickets, use the ‘Price’ filter on the search results page. This will sort bus options from the lowest to highest fare, helping you select the most affordable option for your journey.
+      </p>
+    </details>
+
+    <!-- FAQ Item 4 -->
+    <details class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+      <summary class="text-lg font-semibold cursor-pointer list-none flex justify-between items-center">
+        Q: Why might I not be able to avail bus ticket offers at checkout?
+        <span class="text-blue-500 transform transition-transform duration-300 ease-in-out group-open:rotate-90 cursor-pointer hover:text-blue-700 hover:scale-110">▶</span>
+      </summary>
+      <p class="mt-4 leading-relaxed text-gray-700">
+        Bus ticket prices and offers update in real-time. Offers may expire or seats may sell out before checkout, causing price changes. We recommend verifying the final price just before completing your booking to ensure the best deal.
+      </p>
+    </details>
+    
+  </div>
+</div>
+
+
+{% endblock content %}

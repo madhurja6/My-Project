@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+
+{% block title %}Search Trains | BookMyTicket{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="min-h-screen bg-gray-50 p-4 sm:p-6">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header Section -->
+    <div class="text-center mb-8 sm:mb-12">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Find Your Perfect Train</h1>
+      <p class="text-gray-600 max-w-lg mx-auto">Search and book train tickets across India's extensive railway network</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8 sm:mb-12">
+      <form method="get" class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4">
+        <!-- Source Input -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">From Station</label>
+          <div class="relative">
+            <input type="text" name="source" placeholder="Delhi"
+                   value="{{ request.GET.source }}"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          </div>
+        </div>
+        
+        <!-- Destination Input -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">To Station</label>
+          <div class="relative">
+            <input type="text" name="destination" placeholder="Mumbai"
+                   value="{{ request.GET.destination }}"
+                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          </div>
+        </div>
+        
+        <!-- Search Button -->
+        <div class="flex items-end">
+          <button type="submit" 
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+            Search Trains
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Section -->
+    <div class="space-y-6">
+      {% for ticket in tickets %}
+      <!-- Train Ticket Card -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition duration-200 border border-gray-100">
+        <!-- Train Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4 text-white">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div class="mb-2 sm:mb-0">
+              <h2 class="text-xl font-bold">{{ ticket.name }}</h2>
+              <p class="text-sm opacity-90">{{ ticket.date_time|date:"D, d M Y" }}</p>
+            </div>
+            <span class="text-sm bg-white/20 px-3 py-1 rounded-full">{{ ticket.get_type1_display }}</span>
+          </div>
+        </div>
+
+        <!-- Train Details -->
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Route Information -->
+            <div class="flex flex-col sm:flex-row md:flex-col items-center justify-between">
+              <div class="text-center mb-4 sm:mb-0 md:mb-4">
+                <p class="text-xl font-bold text-gray-800">{{ ticket.departure_time }}</p>
+                <p class="text-xl font-semibold text-gray-600">{{ ticket.source }}</p>
+              </div>
+              
+              <div class="hidden sm:block md:hidden mx-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+              
+              <div class="text-center">
+                <p class="text-xl font-bold text-gray-800">{{ ticket.arrival_time }}</p>
+                <p class="text-xl font-semibold text-gray-600">{{ ticket.destination }}</p>
+              </div>
+            </div>
+
+            <!-- Train Details -->
+            <div class="border-t md:border-t-0 md:border-l md:border-r border-gray-200 pt-4 md:pt-0 md:px-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <p class="text-xs text-gray-500 uppercase tracking-wider">Class</p>
+                  <p class="font-medium">{{ ticket.get_type2_display }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 uppercase tracking-wider">Available</p>
+                  <p class="font-medium">{{ ticket.total_seats }} seats</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 uppercase tracking-wider">Train No</p>
+                  <p class="font-medium">TR{{ ticket.id|stringformat:"04d" }}</p>
+                </div>
+                <div>
+                  <p class=" text-gray-900 uppercase tracking-wider">Happy <br> Journey</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price & Booking -->
+            <div class="border-t md:border-t-0 border-gray-200 pt-4 md:pt-0 flex flex-col justify-between">
+              <div class="text-right mb-4">
+                <p class="text-xs text-gray-500">Starting from</p>
+                <p class="text-2xl font-bold text-blue-600">₹{{ ticket.price }}</p>
+              </div>
+              <form method="post" action="{% url 'book_train_ticket' ticket.id %}">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Book Now
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Empty State -->
+      <div class="bg-white rounded-xl shadow-sm p-8 text-center max-w-md mx-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">No trains found</h3>
+        <p class="text-gray-600 mb-6">We couldn't find any trains matching your search criteria.</p>
+        <a href="{% url 'trainhome' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition">
+          Try a new search
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% else %}
+<!-- Login Prompt -->
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-700 to-blue-900 p-4">
+  <div class="bg-white rounded-xl shadow-xl p-8 sm:p-10 max-w-md w-full text-center">
+    <div class="mx-auto h-16 w-16 text-blue-500 mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    </div>
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Login Required</h2>
+    <p class="text-gray-600 mb-6">Please login to view and book train tickets</p>
+    <div class="space-y-3">
+      <a href="{% url 'login' %}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
+        Login
+      </a>
+      <a href="{% url 'register' %}" class="block w-full bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-2 px-4 rounded-lg transition">
+        Create Account
+      </a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<style>
+  /* Optimized transitions */
+  .transition {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  
+  /* Card hover effect */
+  .hover\\:shadow-md:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+</style>
+{% endblock content %}
