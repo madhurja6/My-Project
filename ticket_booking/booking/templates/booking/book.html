@@ -113,6 +113,11 @@
                 <p class="text-xs text-gray-500">Starting from</p>
                 <p class="text-2xl font-bold text-blue-600">₹{{ ticket.price }}</p>
               </div>
+              {% if ticket.has_departed %}
+                <button class="bg-gray-400 text-white font-medium py-2 px-5 rounded-lg cursor-not-allowed" disabled>
+                  Expired
+                </button>
+              {% else %}
               <form method="post" action="{% url 'book_train_ticket' ticket.id %}">
                 {% csrf_token %}
                 <button type="submit" 
@@ -123,6 +128,7 @@
                   Book Now
                 </button>
               </form>
+              {% endif %}
             </div>
           </div>
         </div>

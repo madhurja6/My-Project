@@ -27,3 +27,7 @@ class Ticketsplane(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.source} to {self.destination})"
+    
+    @property
+    def has_departed(self):
+        return timezone.now() > self.departure_time
