@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-fw8@@gg#)eoz#mo8yog4l@hinq15+$=#h+ssyprarfx29ul_7=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['my-project-funb.onrender.com']
 
 
 # Application definition
