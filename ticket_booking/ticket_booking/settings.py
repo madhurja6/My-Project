@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['my-project-funb.onrender.com']
 
+CSRF_TRUSTED_ORIGINS = ['https://my-project-funb.onrender.com']
 
 # Application definition
 
