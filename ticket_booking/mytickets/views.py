@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Ticket, UserTicket
@@ -8,16 +7,16 @@ from .models import Ticket, UserTicket
 def book_ticket_now(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
-    # Prevent double booking
     if UserTicket.objects.filter(user=request.user, ticket=ticket).exists():
         return redirect('my_tickets')
 
-    # Save booking
     UserTicket.objects.create(user=request.user, ticket=ticket)
     return redirect('my_tickets')
 
+
+@login_required
 def my_tickets(request):
-    bookings = UserTicket.objects.filter(user=request.user)
+    bookings = UserTicket.objects.filter(user=request.user).order_by('-booked_at')  # 👈 Sorted here
     return render(request, 'mytickets/my_tickets.html', {
         'bookings': bookings,
         'now': timezone.now(),
