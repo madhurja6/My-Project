@@ -29,7 +29,7 @@
                     {% endfor %}
                 {% endif %}
 
-                <form method="POST" class="space-y-6">
+                <form method="POST" class="space-y-6" id="registerForm">
                     {% csrf_token %}
 
                     <!-- Username Field -->
@@ -37,6 +37,8 @@
                         <label for="username" class="block text-sm font-medium text-gray-300 group-focus-within:text-amber-400 transition-colors mb-1">Username</label>
                         <div class="relative">
                             <input type="text" name="username" id="username" placeholder="username" required
+                                   pattern="^[^0-9].*" 
+                                   title="Username cannot start with a number"
                                    class="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 
                                           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent
                                           transition-all duration-200">
@@ -46,6 +48,7 @@
                                 </svg>
                             </div>
                         </div>
+                        <p id="username-error" class="mt-1 text-xs text-red-400 hidden">Username cannot start with a number</p>
                     </div>
 
                     <!-- Email Field -->
@@ -89,18 +92,19 @@
                                           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent
                                           transition-all duration-200">
                             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400 group-focus-within:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg id="password-match-icon" class="h-5 w-5 text-gray-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </div>
                         </div>
+                        <p id="password-match-text" class="mt-1 text-xs text-green-400 hidden">Passwords match!</p>
                     </div>
 
                     <!-- Terms and Conditions -->
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
                             <input id="terms" name="terms" type="checkbox" required
-                                   class="h-4 w-4 rounded bg-white/5 border-white/10 text-blue-500-500 focus:ring-amber-400">
+                                   class="h-4 w-4 rounded bg-white/5 border-white/10 text-blue-500 focus:ring-amber-400">
                         </div>
                         <div class="ml-3 text-sm">
                             <label for="terms" class="font-medium text-gray-300">I agree to the <a href="#" class="text-sky-400 hover:underline">Terms and Conditions</a></label>
@@ -108,10 +112,10 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit"
-                            class="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 
-                                   text-white font-semibold rounded-lg shadow-md transition-all duration-300 
-                                   transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-opacity-50">
+                    <button type="submit" id="submitBtn" disabled
+                            class="w-full py-3 px-4 bg-gradient-to-r from-blue-500/50 to-purple-600/50 
+                                   text-white/70 font-semibold rounded-lg shadow-md transition-all duration-300 
+                                   cursor-not-allowed">
                         Create Account
                     </button>
                 </form>
@@ -123,6 +127,7 @@
                             <div class="w-full border-t border-white/10"></div>
                         </div>
                     </div>
+                </div>
 
                 <!-- Login Link -->
                 <p class="mt-8 text-center text-sm text-gray-400">
@@ -133,6 +138,86 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameInput = document.getElementById('username');
+        const usernameError = document.getElementById('username-error');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const passwordMatchIcon = document.getElementById('password-match-icon');
+        const passwordMatchText = document.getElementById('password-match-text');
+        const termsCheckbox = document.getElementById('terms');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('registerForm');
+
+        // Username validation - no numbers at beginning
+        usernameInput.addEventListener('input', function() {
+            const startsWithNumber = /^\d/.test(this.value);
+            
+            if (startsWithNumber) {
+                this.setCustomValidity("Username cannot start with a number");
+                this.classList.add('border-red-500');
+                this.classList.remove('border-white/10');
+                usernameError.classList.remove('hidden');
+            } else {
+                this.setCustomValidity("");
+                this.classList.remove('border-red-500');
+                this.classList.add('border-white/10');
+                usernameError.classList.add('hidden');
+            }
+            updateSubmitButton();
+        });
+
+        // Check password match in real-time
+        confirmPasswordInput.addEventListener('input', function() {
+            if (passwordInput.value && confirmPasswordInput.value) {
+                if (passwordInput.value === confirmPasswordInput.value) {
+                    passwordMatchIcon.classList.remove('hidden');
+                    passwordMatchIcon.classList.remove('text-gray-400');
+                    passwordMatchIcon.classList.add('text-green-400');
+                    passwordMatchText.classList.remove('hidden');
+                } else {
+                    passwordMatchIcon.classList.add('hidden');
+                    passwordMatchText.classList.add('hidden');
+                }
+            } else {
+                passwordMatchIcon.classList.add('hidden');
+                passwordMatchText.classList.add('hidden');
+            }
+            updateSubmitButton();
+        });
+
+        // Enable/disable submit button based on form validity
+        function updateSubmitButton() {
+            const usernameValid = !/^\d/.test(usernameInput.value);
+            const passwordsMatch = passwordInput.value === confirmPasswordInput.value;
+            const termsChecked = termsCheckbox.checked;
+            const allFieldsFilled = 
+                usernameInput.value && 
+                document.getElementById('email').value && 
+                passwordInput.value && 
+                confirmPasswordInput.value;
+
+            if (usernameValid && passwordsMatch && termsChecked && allFieldsFilled) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-gradient-to-r', 'from-blue-500/50', 'to-purple-600/50', 'text-white/70', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-600', 'text-white', 'hover:from-blue-600', 'hover:to-purple-700', 'hover:scale-[1.02]', 'cursor-pointer');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('bg-gradient-to-r', 'from-blue-500/50', 'to-purple-600/50', 'text-white/70', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-gradient-to-r', 'from-blue-500', 'to-purple-600', 'text-white', 'hover:from-blue-600', 'hover:to-purple-700', 'hover:scale-[1.02]', 'cursor-pointer');
+            }
+        }
+
+        // Add event listeners for all form fields
+        form.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', updateSubmitButton);
+        });
+
+        termsCheckbox.addEventListener('change', updateSubmitButton);
+    });
+</script>
 {% endblock content %}
 
 {% block footer %}{% endblock footer %}
