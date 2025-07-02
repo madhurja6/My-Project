@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 from booking_plane.models import Ticketsplane
 from booking.models import Tickets  # Train ticket
 from booking_bus.models import Ticketsbus
@@ -28,6 +29,13 @@ class Ticket(models.Model):
     def __str__(self):
         return f"{self.type}: {self.source} to {self.destination}"
     
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Update related UserTicket if fields changed
+        self.userticket_set.all().update(
+            # no need to store separately unless you need snapshot
+        )
+    
 class UserTicket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
@@ -35,4 +43,15 @@ class UserTicket(models.Model):
 
     def __str__(self):
         return f"{self.user.username} booked {self.ticket}"
+    
+    def is_confirmed(self):
+        return timezone.now() >= self.booked_at + timedelta(days=1)
+    
+    @property
+    def departure_time(self):
+        return self.ticket.departure_time
+
+    @property
+    def arrival_time(self):
+        return self.ticket.arrival_time
 

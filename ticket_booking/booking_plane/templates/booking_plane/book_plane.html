@@ -57,7 +57,7 @@
                         <h3 class="font-bold text-lg uppercase tracking-wide">Flight {{ ticket.id }}</h3>
                         <span class="text-sm bg-white/20 px-2 py-1 rounded">{{ ticket.get_type1_display }}</span>
                     </div>
-                    <p class="text-sm opacity-90 mt-1">{{ ticket.date_time|date:"D, d M Y" }}</p>
+                    <p class="text-sm opacity-90 mt-1">{{ ticket.departure_time|date:"D, d M Y" }}</p>
                 </div>
 
                 <!-- Flight Details -->

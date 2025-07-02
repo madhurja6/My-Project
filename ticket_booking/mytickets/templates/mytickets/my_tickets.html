@@ -35,7 +35,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div>
                         <p class="text-blue-100 text-sm">DEPARTURE</p>
-                        <p class="font-bold text-lg">{{ b.ticket.departure_time }}</p>
+                        <p class="font-bold text-lg">{{ b.departure_time }}</p>
                     </div>
                     <div class="flex items-center justify-center">
                         <div class="relative w-full">
@@ -51,8 +51,21 @@
                     </div>
                     <div class="text-right">
                         <p class="text-blue-100 text-sm">ARRIVAL</p>
-                        <p class="font-bold text-lg">{{ b.ticket.arrival_time }}</p>
+                        <p class="font-bold text-lg">{{ b.arrival_time }}</p>
                     </div>
+                </div>
+
+                <!-- Confirmation Status -->
+                <div class="pt-2">
+                    {% if b.is_confirmed %}
+                        <span class="bg-green-600 text-white px-4 py-1.5 rounded-lg font-semibold text-sm">
+                            ✅ Confirmed
+                        </span>
+                    {% else %}
+                        <span class="bg-yellow-500 text-white px-4 py-1.5 rounded-lg font-semibold text-sm">
+                            ⏳ Not Confirmed
+                        </span>
+                    {% endif %}
                 </div>
 
                 <!-- Footer with Cancel Logic -->
