@@ -16,10 +16,10 @@ def book_ticket_now(request, ticket_id):
 
 @login_required
 def my_tickets(request):
-    bookings = UserTicket.objects.filter(user=request.user).order_by('-booked_at')  # 👈 Sorted here
+    bookings = UserTicket.objects.filter(user=request.user).order_by('-booked_at') 
     return render(request, 'mytickets/my_tickets.html', {
         'bookings': bookings,
-        'now': timezone.now(),
+        'now': timezone.now(),  
     })
 
 
